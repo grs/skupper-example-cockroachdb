@@ -1,5 +1,8 @@
 # skupper-example-cockroachdb
-Simple example of a cockroachdb cluster over two different kubernetes clusters using skupper
+
+Simple example of a cockroachdb cluster over two different kubernetes
+clusters using skupper. This is based on the example from
+https://github.com/cockroachdb/cockroach/tree/master/cloud/kubernetes
 
 # Setup
 
@@ -45,3 +48,5 @@ Once everything has initialised you can verify the cockroachdb cluster now has 5
 
 and then accessing http://localhost:8080 with your browser
 
+You can then e.g. scale up the statefulset on the second kubernetes
+cluster and verify that the console eventually shows 6 nodes.
