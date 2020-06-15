@@ -6,8 +6,9 @@ https://github.com/cockroachdb/cockroach/tree/master/cloud/kubernetes
 
 # Setup
 
-You need two kubernetes clusters, the first of of which must be accessible by
-the other.
+You need two kubernetes clusters, the first of of which must be
+accessible by the other. Note: at present the namespaces on each of
+these clusters must have the same name.
 
 In the first kubernetes cluster:
 
