@@ -23,24 +23,32 @@ In the first kubernetes cluster:
 
 ```skupper init```
 
-4. create a connection token with which the second kubernetes cluster
+4. expose the statefulset's headless service to the skupper network:
+
+```skupper expose statefulset cockroachdb-g1 --headless --port 26257```
+
+5. create a connection token with which the second kubernetes cluster
 will connect to this first one
 
 ```skupper connection-token site-one.yaml```
 
 Now in the second kubernetes cluster:
 
-5. initialise skupper
+6. initialise skupper
 
 ```skupper init```
 
-6. connect the two skupper sites using the connection token created in step 4
+7. connect the two skupper sites using the connection token created in step 5
 
 ```skupper connect site-one.yaml```
 
-7. create another cockroachdb statefulset in the second cluster
+8. create another cockroachdb statefulset in the second cluster
 
 ```kubectl apply -f ./cockroachdb-statefulset-g2.yaml```
+
+9. expose the headless service of this second statefulset also:
+
+```skupper expose statefulset cockroachdb-g2 --headless --port 26257```
 
 Once everything has initialised you can verify the cockroachdb cluster now has 5 members by port forwarding on the first cluster:
 
