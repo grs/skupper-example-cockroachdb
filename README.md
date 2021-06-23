@@ -31,7 +31,7 @@ In the first kubernetes cluster:
 5. create a connection token with which the second kubernetes cluster
 will connect to this first one
 
-```skupper connection-token site-one.yaml```
+```skupper token create site-one.yaml```
 
 Now in the second kubernetes cluster:
 
@@ -41,7 +41,7 @@ Now in the second kubernetes cluster:
 
 7. connect the two skupper sites using the connection token created in step 5
 
-```skupper connect site-one.yaml```
+```skupper link create site-one.yaml```
 
 8. create another cockroachdb statefulset in the second cluster
 
@@ -58,4 +58,15 @@ Once everything has initialised you can verify the cockroachdb cluster now has 5
 and then accessing http://localhost:8080 with your browser
 
 You can then e.g. scale up the statefulset on the second kubernetes
-cluster and verify that the console eventually shows 6 nodes.
+cluster and verify that the console eventually shows the extra nodes.
+
+10. populate a sample database
+
+```kubectl create job loadgen-1-minute --image=cockroachdb/loadgen-kv:0.1 -- /kv --duration=1m postgres://root@cockroachdb-public:26257/kv?sslmode=disable```
+
+The job above will run for 1 minute and will populate records into the `kv` table (`test` database).
+
+11. verify records have been inserted
+
+```kubectl run cockroachdb -it --image=cockroachdb/cockroach --rm --restart=Never -- sql --insecure --host=cockroachdb-internal-g1 -e 'select count(*) from test.kv'```
+```kubectl run cockroachdb -it --image=cockroachdb/cockroach --rm --restart=Never -- sql --insecure --host=cockroachdb-internal-g2 -e 'select count(*) from test.kv'```
