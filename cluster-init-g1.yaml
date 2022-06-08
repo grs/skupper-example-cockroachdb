@@ -15,5 +15,5 @@ spec:
           - "/cockroach/cockroach"
           - "init"
           - "--insecure"
-          - "--host=cockroachdb-g1-0.cockroachdb-internal-g1"
+          - "--host=cockroachdb-g1-0"
       restartPolicy: OnFailure

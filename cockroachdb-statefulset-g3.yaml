@@ -27,7 +27,7 @@ metadata:
   # set such that they can resolve each other's IP addresses. It does not
   # create a load-balanced ClusterIP and should not be used directly by clients
   # in most circumstances.
-  name: cockroachdb-internal-g1
+  name: cockroachdb-internal-g3
   labels:
     app: cockroachdb
   annotations:
@@ -59,10 +59,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: cockroachdb-g1-0
+  name: cockroachdb-g3-0
 spec:
   type: ExternalName
-  externalName: cockroachdb-g1-0.cockroachdb-internal-g1.${NAMESPACE}.svc.cluster.local
+  externalName: cockroachdb-g3-0.cockroachdb-internal-g3.${NAMESPACE}.svc.cluster.local
   ports:
   - port: 26257
     targetPort: 26257
@@ -74,10 +74,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: cockroachdb-g1-1
+  name: cockroachdb-g3-1
 spec:
   type: ExternalName
-  externalName: cockroachdb-g1-1.cockroachdb-internal-g1.${NAMESPACE}.svc.cluster.local
+  externalName: cockroachdb-g3-1.cockroachdb-internal-g3.${NAMESPACE}.svc.cluster.local
   ports:
   - port: 26257
     targetPort: 26257
@@ -89,10 +89,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: cockroachdb-g1-2
+  name: cockroachdb-g3-2
 spec:
   type: ExternalName
-  externalName: cockroachdb-g1-2.cockroachdb-internal-g1.${NAMESPACE}.svc.cluster.local
+  externalName: cockroachdb-g3-2.cockroachdb-internal-g3.${NAMESPACE}.svc.cluster.local
   ports:
   - port: 26257
     targetPort: 26257
@@ -104,11 +104,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: cockroachdb-g1-0-sk
+  name: cockroachdb-g3-0-sk
   annotations:
     skupper.io/proxy: tcp
-    skupper.io/target: cockroachdb-g1-0.cockroachdb-internal-g1
-    skupper.io/address: cockroachdb-g1-0
+    skupper.io/target: cockroachdb-g3-0.cockroachdb-internal-g3
+    skupper.io/address: cockroachdb-g3-0
 spec:
   type: ClusterIP
   ports:
@@ -122,11 +122,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: cockroachdb-g1-1-sk
+  name: cockroachdb-g3-1-sk
   annotations:
     skupper.io/proxy: tcp
-    skupper.io/target: cockroachdb-g1-1.cockroachdb-internal-g1
-    skupper.io/address: cockroachdb-g1-1
+    skupper.io/target: cockroachdb-g3-1.cockroachdb-internal-g3
+    skupper.io/address: cockroachdb-g3-1
 spec:
   type: ClusterIP
   ports:
@@ -140,11 +140,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: cockroachdb-g1-2-sk
+  name: cockroachdb-g3-2-sk
   annotations:
     skupper.io/proxy: tcp
-    skupper.io/target: cockroachdb-g1-2.cockroachdb-internal-g1
-    skupper.io/address: cockroachdb-g1-2
+    skupper.io/target: cockroachdb-g3-2.cockroachdb-internal-g3
+    skupper.io/address: cockroachdb-g3-2
 spec:
   type: ClusterIP
   ports:
@@ -170,9 +170,9 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: cockroachdb-g1
+  name: cockroachdb-g3
 spec:
-  serviceName: cockroachdb-internal-g1
+  serviceName: cockroachdb-internal-g3
   replicas: 3
   selector:
     matchLabels:
@@ -209,7 +209,6 @@ spec:
         #   limits:
         #     cpu: "16"
         #     memory: "8Gi" 
-        #   limits:
         ports:
         - containerPort: 26257
           name: grpc
@@ -256,7 +255,7 @@ spec:
             --insecure
             --http-addr 0.0.0.0
             --advertise-addr $(hostname)
-            --join cockroachdb-g1-0,cockroachdb-g1-1,cockroachdb-g1-2
+            --join cockroachdb-g1-0,cockroachdb-g1-1,cockroachdb-g1-2,cockroachdb-g2-0,cockroachdb-g2-1,cockroachdb-g2-2
             --cache $(expr $MEMORY_LIMIT_MIB / 4)MiB
             --max-sql-memory $(expr $MEMORY_LIMIT_MIB / 4)MiB
       # No pre-stop hook is required, a SIGTERM plus some time is all that's

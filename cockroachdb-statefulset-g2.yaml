@@ -56,7 +56,106 @@ spec:
   selector:
     app: cockroachdb
 ---
-apiVersion: policy/v1beta1
+apiVersion: v1
+kind: Service
+metadata:
+  name: cockroachdb-g2-0
+spec:
+  type: ExternalName
+  externalName: cockroachdb-g2-0.cockroachdb-internal-g2.${NAMESPACE}.svc.cluster.local
+  ports:
+  - port: 26257
+    targetPort: 26257
+    name: grpc
+  - port: 8080
+    targetPort: 8080
+    name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cockroachdb-g2-1
+spec:
+  type: ExternalName
+  externalName: cockroachdb-g2-1.cockroachdb-internal-g2.${NAMESPACE}.svc.cluster.local
+  ports:
+  - port: 26257
+    targetPort: 26257
+    name: grpc
+  - port: 8080
+    targetPort: 8080
+    name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cockroachdb-g2-2
+spec:
+  type: ExternalName
+  externalName: cockroachdb-g2-2.cockroachdb-internal-g2.${NAMESPACE}.svc.cluster.local
+  ports:
+  - port: 26257
+    targetPort: 26257
+    name: grpc
+  - port: 8080
+    targetPort: 8080
+    name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cockroachdb-g2-0-sk
+  annotations:
+    skupper.io/proxy: tcp
+    skupper.io/target: cockroachdb-g2-0.cockroachdb-internal-g2
+    skupper.io/address: cockroachdb-g2-0
+spec:
+  type: ClusterIP
+  ports:
+  - port: 26257
+    targetPort: 26257
+    name: grpc
+  - port: 8080
+    targetPort: 8080
+    name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cockroachdb-g2-1-sk
+  annotations:
+    skupper.io/proxy: tcp
+    skupper.io/target: cockroachdb-g2-1.cockroachdb-internal-g2
+    skupper.io/address: cockroachdb-g2-1
+spec:
+  type: ClusterIP
+  ports:
+  - port: 26257
+    targetPort: 26257
+    name: grpc
+  - port: 8080
+    targetPort: 8080
+    name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cockroachdb-g2-2-sk
+  annotations:
+    skupper.io/proxy: tcp
+    skupper.io/target: cockroachdb-g2-2.cockroachdb-internal-g2
+    skupper.io/address: cockroachdb-g2-2
+spec:
+  type: ClusterIP
+  ports:
+  - port: 26257
+    targetPort: 26257
+    name: grpc
+  - port: 8080
+    targetPort: 8080
+    name: http
+---
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: cockroachdb-budget
@@ -155,8 +254,8 @@ spec:
             --logtostderr
             --insecure
             --http-addr 0.0.0.0
-            --advertise-addr $(hostname).cockroachdb-internal-g2
-            --join cockroachdb-g1-0.cockroachdb-internal-g1,cockroachdb-g1-1.cockroachdb-internal-g1,cockroachdb-g1-2.cockroachdb-internal-g1
+            --advertise-addr $(hostname)
+            --join cockroachdb-g1-0,cockroachdb-g1-1,cockroachdb-g1-2
             --cache $(expr $MEMORY_LIMIT_MIB / 4)MiB
             --max-sql-memory $(expr $MEMORY_LIMIT_MIB / 4)MiB
       # No pre-stop hook is required, a SIGTERM plus some time is all that's
