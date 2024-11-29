@@ -26,13 +26,13 @@ and
 Then, once the AccessGrant on east is ready, we need to link the two sites together:
 
 ```
-kubectl --kubeconfig=first.cfg -n east wait --for=condition=ready accessgrant/east-grant --timeout 5m && kubectl --kubeconfig=first.cfg -n east get accessgrant east-grant -o template --go-template-file accesstoken.template | kubectl  --kubeconfig=second.cfg -n west apply -f -
+kubectl --kubeconfig=first.cfg -n east wait --for=condition=ready accessgrant/east-grant --timeout 5m && kubectl --kubeconfig=first.cfg -n east get accessgrant east-grant -o go-template-file=accesstoken.template | kubectl  --kubeconfig=second.cfg -n west apply -f -
 ```
 
 Then once the cockroachdb pods in east are running, we initiliase the cluster:
 
 ```
-kubectl --kubeconfig=first.cfg -n east wait statefulset/cockroachdb-g1 --for=condition=available --timeout 5m && kubectl --kubeconfig=first.cfg -n east apply -f ./cluster-init-g1.yaml
+kubectl --kubeconfig=first.cfg -n east wait statefulset/cockroachdb-g1 --for=jsonpath='{.status.currentReplicas}'=3 --timeout 5m && kubectl --kubeconfig=first.cfg -n east apply -f ./cluster-init-g1.yaml
 ```
 
 Once everything has initialised you can view the console by port forwarding on the first cluster:
